@@ -356,6 +356,7 @@ export default function Hero() {
           padding: 80px 60px 0;
           font-family: Arial, sans-serif;
           gap: 40px;
+          position: relative;
         }
         .hero-text { flex: 0 0 auto; max-width: 520px; }
         .hero-title { font-size: 4rem; }
@@ -410,7 +411,72 @@ export default function Hero() {
         />
       </section>
 
-      
+      {/* Scroll Down Indicator */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '40px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '8px',
+          cursor: 'pointer',
+          zIndex: 10,
+        }}
+        onClick={() => {
+          const skillsSection = document.getElementById('skills');
+          if (skillsSection) {
+            skillsSection.scrollIntoView({ behavior: 'smooth' });
+          }
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.opacity = '1';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.opacity = '0.6';
+        }}
+      >
+        <style>
+          {`
+            @keyframes bounce-arrow {
+              0%, 100% { transform: translateY(0); opacity: 0.6; }
+              50% { transform: translateY(12px); opacity: 1; }
+            }
+
+            .scroll-indicator {
+              animation: bounce-arrow 2s infinite;
+              transition: all 0.3s ease;
+            }
+          `}
+        </style>
+        <span
+          style={{
+            fontSize: '12px',
+            color: 'rgba(255, 255, 255, 0.5)',
+            letterSpacing: '2px',
+            textTransform: 'uppercase',
+            fontWeight: 600,
+          }}
+        >
+          Scroll
+        </span>
+        <svg
+          className="scroll-indicator"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          style={{
+            color: '#ff3366',
+          }}
+        >
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </div>
     </>
   );
 }
