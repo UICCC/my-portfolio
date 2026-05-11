@@ -21,50 +21,48 @@ export async function POST(request) {
       );
     }
 
-    // If email credentials are configured, send actual emails
-    if (process.env.EMAIL_USER && process.env.EMAIL_PASSWORD) {
-      const transporter = nodemailer.createTransport({
-        service: process.env.EMAIL_SERVICE || 'gmail',
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASSWORD,
-        },
-      });
-
-      // Email to you (admin)
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: process.env.EMAIL_USER,
-        subject: `New Contact Form Submission from ${name}`,
-        html: `
-          <h2>New Message from Portfolio Contact Form</h2>
-          <p><strong>Name:</strong> ${name}</p>
-          <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Message:</strong></p>
-          <p>${message.replace(/\n/g, '<br>')}</p>
-        `,
-      });
-
-      // Confirmation email to user
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: 'I received your message',
-        html: `
-          <h2>Thank you for reaching out, ${name}!</h2>
-          <p>I've received your message and will get back to you as soon as possible.</p>
-          <p>Best regards,<br>Yash Kumar</p>
-        `,
-      });
-    } else {
-      // Development mode: log the message to console
-      console.log('=== CONTACT FORM SUBMISSION ===');
-      console.log('Name:', name);
-      console.log('Email:', email);
-      console.log('Message:', message);
-      console.log('============================');
-      console.log('Note: To enable actual email sending, configure EMAIL_USER and EMAIL_PASSWORD in .env.local');
+    // Require email credentials to send actual emails
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+      console.error('Missing email credentials in .env.local');
+      return new Response(
+        JSON.stringify({ error: 'Email credentials are not configured. Please set EMAIL_USER and EMAIL_PASSWORD in .env.local.' }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      );
     }
+
+    const transporter = nodemailer.createTransport({
+      service: process.env.EMAIL_SERVICE || 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+
+    // Email to you (admin)
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: process.env.EMAIL_USER,
+      subject: `New Contact Form Submission from ${name}`,
+      html: `
+        <h2>New Message from Portfolio Contact Form</h2>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Message:</strong></p>
+        <p>${message.replace(/\n/g, '<br>')}</p>
+      `,
+    });
+
+    // Confirmation email to user
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'I received your message',
+      html: `
+        <h2>Thank you for reaching out, ${name}!</h2>
+        <p>I've received your message and will get back to you as soon as possible.</p>
+        <p>Best regards,<br>Yash Kumar</p>
+      `,
+    });
 
     return new Response(
       JSON.stringify({ success: true, message: 'Message received! I will get back to you soon.' }),
