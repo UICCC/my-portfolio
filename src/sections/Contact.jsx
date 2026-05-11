@@ -405,10 +405,10 @@ export default function Contact() {
                 e.target.style.textDecoration = 'none';
               }}
             >
-              📧 your.email@example.com
+              📧 yk61342@gmail.com
             </a>
             <a
-              href="https://linkedin.com"
+              href="https://www.linkedin.com/in/yash-kumar-43a445181/"
               target="_blank"
               rel="noopener noreferrer"
               style={{
